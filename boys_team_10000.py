@@ -52,7 +52,7 @@ def reset_world():
     world.append(grass)
 
     #boy 랜덤 생성
-    team = [Boy() for i in range(10)]
+    team = [Boy() for i in range(10000)]
     world += team
 
 
