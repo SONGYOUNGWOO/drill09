@@ -14,12 +14,23 @@ class Grass:
     def update(self):
         pass
 
-
+#file:///C:/2DGPsyw/20232DGP/2DGP/Slides/LEC10_%EC%BA%90%EB%A6%AD%ED%84%B0%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC%20(1).pdf
 class Boy:
+    #클랙스 객체에 항당되는 변수, 객체들은 공유하는 동일한 변수를 갖게 됨 ex(image)
+    #클래스변수(Boy).image
+    image = None
+
+    #__init__생성자함수 - 객체의 속성의 초기값 생성
     def __init__(self):
+        #위치를 나타내는 속성값은 다르다
         self.x, self.y = random.randint(0, 800), 90
-        self.frame = 0
-        self.image = load_image('run_animation.png')
+        self.frame = random.randint(0,7)
+
+        if Boy.image == None:
+            Boy.image = load_image('run_animation.png')
+
+        #같은 이미지를 사용하는 속성이 같다
+        #self.image = load_image('run_animation.png')
 
     def update(self):
         self.frame = (self.frame + 1) % 8
