@@ -2,7 +2,7 @@ from pico2d import load_image
 
 class IDLE:
     @staticmethod
-    def do(self):
+    def do():
         pass
 
     @staticmethod
