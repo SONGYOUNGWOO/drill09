@@ -138,8 +138,7 @@ class AutoRun:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 10
-        #random.choice([-1, 1])
+        boy.x += boy.dir * 1 * random.choice([-1, 1])
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         print('AutoRun')
