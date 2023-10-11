@@ -31,8 +31,10 @@ def right_up(e):
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
+
 def key_a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
+
 
 # ----------------------------------------------------------------------------------------
 # ----------------------Idle--------------------------------------------------------------
@@ -40,13 +42,12 @@ def key_a_down(e):
 class Idle:
     @staticmethod  # 함수 그립핑 class
     def enter(boy, e):
-        if boy.action == 0:
+        if boy.action == 0:  # 마지막이 왼쪽이면  2
             boy.action = 2
-        elif boy.action == 1:
+        elif boy.action == 1:  # 마지막이 오른쪽이면  3
             boy.action = 3
         boy.dir = 0
         boy.frame = 0
-
         boy.idle_start_time = get_time()  # from pico2d import get_time 필요, 현재 경과시간
         print('Idle Enter - 고개 숙이기')
 
@@ -74,7 +75,7 @@ class Idle:
 class Sleep:
     @staticmethod
     def enter(boy, e):
-        boy.action = 0
+        boy.frame = 0
         print('Sleep Enter')
 
     @staticmethod
@@ -90,9 +91,11 @@ class Sleep:
     @staticmethod
     def draw(boy):
         if boy.action == 2:  # 왼쪽방향
-            boy.image.clip_composite_draw(boy.frame * 100, 300, 100, 100,
+            print('왼쪽')
+            boy.image.clip_composite_draw(boy.frame * 100, 200, 100, 100,
                                           -math.pi / 2, '', boy.x + 25, boy.y - 30, 100, 100)
         else:
+            print('오른쪽')
             boy.image.clip_composite_draw(boy.frame * 100, 300, 100, 100,
                                           math.pi / 2, '', boy.x - 25, boy.y - 30, 100, 100)
 
@@ -124,6 +127,8 @@ class Run:
     def draw(boy):
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100,
                             boy.x, boy.y)
+
+
 # ---------------------------------------------------------------------------------------------
 # ----------------------AutoRun----------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------
@@ -131,9 +136,9 @@ class AutoRun:
     @staticmethod
     def enter(boy, e):
         boy.dir = random.choice([-1, 1])
-        if(boy.dir == 1):
-            boy.action =1
-        elif (boy.dir == -1):
+        if boy.dir == 1:
+            boy.action = 1
+        elif boy.dir == -1:
             boy.action = 0
         boy.auto_run_start_time = get_time()
         boy.auto_run_end_time = boy.auto_run_start_time + 5
@@ -146,13 +151,13 @@ class AutoRun:
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
 
-        if(boy.x > 770):
+        if boy.x > 770:
             boy.dir *= -1
-            if (boy.dir == 1):
+            if boy.dir == 1:
                 boy.action = 1
             else:
                 boy.action = 0
-        elif(boy.x < 30):
+        elif (boy.x < 30):
             boy.dir *= -1
             if (boy.dir == 1):
                 boy.action = 1
@@ -169,7 +174,7 @@ class AutoRun:
     @staticmethod
     def draw(boy):
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100,
-                            boy.x, boy.y + 20,200,200)
+                            boy.x, boy.y + 20, 200, 200)
 
 
 # ----------------------------------------------------------------------------------------
@@ -181,13 +186,14 @@ class StateMachine:
         self.cur_state = Idle  # 지금 상태
         self.transitions = {  # 딕션어리 키로부터 value를 찾는다
             Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle},  # Sleep 상태일 때
-            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep, key_a_down: AutoRun},  # Idle 상태일 때
+            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep, key_a_down: AutoRun},
+            # Idle 상태일 때
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},  # Run 상태일때
             AutoRun: {time_out: Idle}
         }
 
     def start(self):
-        self.cur_state.enter(self.boy, ('NONE', 0)) #어떤 상태인가를 받아오려고
+        self.cur_state.enter(self.boy, ('NONE', 0))  # 어떤 상태인가를 받아오려고
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():  # key = self.cur_state
