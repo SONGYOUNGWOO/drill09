@@ -130,7 +130,11 @@ class Run:
 class AutoRun:
     @staticmethod
     def enter(boy, e):
-        boy.dir, boy.action = random.choice([-1, 1]), 1
+        boy.dir = random.choice([-1, 1])
+        if(boy.dir == 1):
+            boy.action =1
+        elif (boy.dir == -1):
+            boy.action = 0
         boy.auto_run_start_time = get_time()
         boy.auto_run_end_time = boy.auto_run_start_time + 5
         print('AutoRun Enter')
@@ -141,10 +145,20 @@ class AutoRun:
         boy.x += boy.dir * 7
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
+
         if(boy.x > 780):
             boy.dir *= -1
+            if (boy.dir == 1):
+                boy.action = 1
+            else:
+                boy.action = 0
         elif(boy.x < 20):
             boy.dir *= -1
+            if (boy.dir == 1):
+                boy.action = 1
+            else: 
+                boy.action = 0
+
         print('AutoRun')
 
     @staticmethod
