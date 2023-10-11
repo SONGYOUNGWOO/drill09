@@ -1,6 +1,8 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
-from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, get_time, SDLK_LEFT, SDLK_RIGHT
+from pico2d import (load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_SPACE, get_time, SDLK_LEFT, SDLK_RIGHT)
 import math
+import random
+import keyboard
 
 
 # ----------------------------------------------------------------------------------------
@@ -29,6 +31,11 @@ def right_up(e):
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
+def keyborad_a_on(e):
+    return (e[0] == 'INPUT' and e[1].type == keyboard.on_press
+            and e[1].key == keyboard.is_pressed("a")) #true이면
+def keyborad_a_release(e):
+    pass
 
 # ----------------------------------------------------------------------------------------
 # ----------------------Idle--------------------------------------------------------------
@@ -120,6 +127,33 @@ class Run:
     def draw(boy):
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100,
                             boy.x, boy.y)
+# -----------------------------------------------------------------------------------------
+# ----------------------AutoRun----------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+class AutoRun:
+    @staticmethod
+    def enter(boy, e):
+        if keyborad_a_on(e):
+            boy.dir, boy.action = 1, 1
+        print('AutoRun Enter ')
+
+    @staticmethod
+    def do(boy):
+        boy.frame = (boy.frame + 1) % 8
+        boy.x += boy.dir * 10 * random.choice([-1, 1])
+        if get_time() - boy.idle_start_time > 5:
+            boy.state_machine.handle_event(('TIME_OUT', 0))
+        print('AutoRun ')
+
+    @staticmethod
+    def exit(boy, e):
+        print('AutoRun Exit')
+        pass
+
+    @staticmethod
+    def draw(boy):
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 300, 300,
+                            boy.x, boy.y)
 
 
 # ----------------------------------------------------------------------------------------
@@ -132,7 +166,8 @@ class StateMachine:
         self.transitions = {  # 딕션어리 키로부터 value를 찾는다
             Sleep: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, space_down: Idle},  # Sleep 상태일 때
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, time_out: Sleep},  # Idle 상태일 때
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle}  # Run 상태일때
+            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle},  # Run 상태일때
+            AutoRun: {time_out: Idle}  # Run 상태일때, 5초이후 Idle
         }
 
     def start(self):
