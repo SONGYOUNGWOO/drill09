@@ -17,13 +17,13 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         else:
-            boy.handle_event(event) #너가 처리해
+            boy.handle_event(event)  # 너가 처리해
 
 
 def reset_world():
     global running
     global grass
-    #global team
+    # global team
     global world
     global boy
 
@@ -35,7 +35,6 @@ def reset_world():
 
     boy = Boy()
     world.append(boy)
-
 
 
 def update_world():

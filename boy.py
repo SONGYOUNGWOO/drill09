@@ -142,21 +142,21 @@ class AutoRun:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 7
+        boy.x += boy.dir * 20
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
 
-        if(boy.x > 780):
+        if(boy.x > 770):
             boy.dir *= -1
             if (boy.dir == 1):
                 boy.action = 1
             else:
                 boy.action = 0
-        elif(boy.x < 20):
+        elif(boy.x < 30):
             boy.dir *= -1
             if (boy.dir == 1):
                 boy.action = 1
-            else: 
+            else:
                 boy.action = 0
 
         print('AutoRun')
