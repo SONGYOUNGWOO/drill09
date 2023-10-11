@@ -141,9 +141,9 @@ class AutoRun:
         boy.x += boy.dir * 7
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
-        if(boy.x > 390):
+        if(boy.x > 780):
             boy.dir *= -1
-        elif(boy.x < 10):
+        elif(boy.x < 20):
             boy.dir *= -1
         print('AutoRun')
 
