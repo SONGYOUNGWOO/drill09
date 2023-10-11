@@ -130,7 +130,7 @@ class Run:
 class AutoRun:
     @staticmethod
     def enter(boy, e):
-        boy.dir, boy.action = 1, 1
+        boy.dir, boy.action = random.choice([-1, 1]), 1
         boy.auto_run_start_time = get_time()
         boy.auto_run_end_time = boy.auto_run_start_time + 5
         print('AutoRun Enter')
@@ -138,9 +138,13 @@ class AutoRun:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.x += boy.dir * 1 * random.choice([-1, 1])
+        boy.x += boy.dir * 7
         if get_time() >= boy.auto_run_end_time:
             boy.state_machine.handle_event(('TIME_OUT', 0))
+        if(boy.x > 390):
+            boy.dir *= -1
+        elif(boy.x < 10):
+            boy.dir *= -1
         print('AutoRun')
 
     @staticmethod
@@ -151,7 +155,7 @@ class AutoRun:
     @staticmethod
     def draw(boy):
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100,
-                            boy.x, boy.y)
+                            boy.x, boy.y + 20,200,200)
 
 
 # ----------------------------------------------------------------------------------------
